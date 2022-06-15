@@ -6,6 +6,9 @@ const Post = model('posts', PostSchema)
 export class PostModel {
   async findById (postId) {
     const post = await Post.findOne({ _id: postId })
+      .populate('author')
+      .populate('categories.category')
+      .lean()
     return post
   }
 
@@ -41,6 +44,10 @@ export class PostModel {
 
     const updatedPost = await Post.findOneAndUpdate(filter, update, option)
     return updatedPost
+  }
+
+  async remove (postId) {
+    await Post.deleteOne({ _id: postId })
   }
 }
 
