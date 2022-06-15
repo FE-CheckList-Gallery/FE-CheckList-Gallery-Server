@@ -34,7 +34,6 @@ export class UserModel {
   async update ({ userId, update }) {
     const filter = { _id: userId }
     const option = { returnOriginal: false }
-
     const updatedUser = await User.findOneAndUpdate(filter, update, option)
     return updatedUser
   }
