@@ -17,8 +17,12 @@ userRouter.get('/', async (req, res, next) => {
 userRouter.get('/:userId', async (req, res, next) => {
   const { userId } = req.params
   try {
-    const allUsers = await userService.getUser(userId, false)
-    res.status(200).json(allUsers)
+    const user = await userService.getUser(userId, false)
+    if (!user) {
+      throw new Error('없는 유저입니다.')
+    }
+
+    res.status(200).json(user)
   } catch (error) {
     next(error)
   }

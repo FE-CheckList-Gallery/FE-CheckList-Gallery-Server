@@ -1,4 +1,5 @@
 import { userModel } from '../db'
+import { postService } from './'
 
 class UserService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
@@ -68,7 +69,10 @@ class UserService {
     if (!user) {
       throw new Error('가입 내역이 없습니다. 다시 한 번 확인해 주세요.')
     }
-
+    const userPosts = await postService.getPosts({ authorId: userId })
+    await Promise.all(userPosts.map(async (post) => {
+      await postService.deletePost(post._id)
+    }))
     user = await this.userModel.delete(user)
   }
 }

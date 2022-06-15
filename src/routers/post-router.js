@@ -51,7 +51,13 @@ postRouter.patch('/:postId', loginRequired, fileServer.array('code'), async (req
   try {
     const setCategories = new Set(categories.map(value => value.toLowerCase()))
     const originPost = await postService.getPost(postId)
-    const originCategory = originPost.categories.map((category) => category.category.name)
+
+    if (!originPost) {
+      throw new Error('수정할 게시글이 없습니다.')
+    }
+    const originCategory = originPost.categories.map(
+      (category) => category.category.name
+    )
     if (author !== originPost.author._id.toString()) {
       throw new Error('수정 권한이 없습니다.')
     }
