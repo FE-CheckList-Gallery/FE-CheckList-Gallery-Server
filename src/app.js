@@ -5,6 +5,7 @@ import { v1Router } from './routers'
 import { errorHandler } from './middlewares'
 import passportInit from './middlewares/passport'
 import morgan from 'morgan'
+import bodyParser from 'body-parser'
 
 const app = express()
 passportInit()
@@ -17,6 +18,8 @@ app.use(morgan('tiny'))
 
 // Content-Type: application/json 형태의 데이터를 인식하고 핸들링할 수 있게 함.
 app.use(express.json())
+
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // Content-Type: application/x-www-form-urlencoded 형태의 데이터를 인식하고 핸들링할 수 있게 함.
 app.use(express.urlencoded({ extended: false }))
