@@ -24,64 +24,92 @@ postRouter.get('/:postId', async (req, res, next) => {
   }
 })
 
-postRouter.post('/', loginRequired, fileServer.array('code'), async (req, res, next) => {
-  let { title, description, categories } = req.body
-  const author = req.currentUserId
-  const code = req.files.map(file => ({ fileName: file.originalname, fileUrl: process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename }))
-  try {
-    const setCategories = new Set(categories.map(value => value.toLowerCase()))
+postRouter.post('/',
+  loginRequired,
+  fileServer.fields([
+    { name: 'thumbnail', maxCount: 1 },
+    { name: 'code', maxCount: 5 }
+  ]),
+  async (req, res, next) => {
+    let { title, description, categories } = req.body
+    const author = req.currentUserId
+    const code = req.files.code.map(file => ({ fileName: file.originalname, fileUrl: process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename }))
+    const thumbnail = req.files.thumbnail.map((file) => ({
+      fileName: file.originalname,
+      fileUrl:
+        process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename
+    }))[0]
+    try {
+      const setCategories = new Set(categories.map(value => value.toLowerCase()))
 
-    if (setCategories.size !== categories.length) {
-      throw new Error('중복된 카테고리가 있습니다.')
+      if (setCategories.size !== categories.length) {
+        throw new Error('중복된 카테고리가 있습니다.')
+      }
+
+      categories = await categoryService.addCategory(categories)
+      const post = await postService.addPost(title, description, categories, author, code, thumbnail)
+      res.status(201).json(post)
+    } catch (error) {
+      next(error)
     }
+  })
 
-    categories = await categoryService.addCategory(categories)
-    const post = await postService.addPost(title, description, categories, author, code)
-    res.status(201).json(post)
-  } catch (error) {
-    next(error)
-  }
-})
+postRouter.patch(
+  '/:postId',
+  loginRequired,
+  fileServer.fields([
+    { name: 'thumbnail', maxCount: 1 },
+    { name: 'code', maxCount: 5 }
+  ]),
+  async (req, res, next) => {
+    const { postId } = req.params
+    let { title, description, categories } = req.body
+    const author = req.currentUserId
+    const code = req.files.code.map((file) => ({
+      fileName: file.originalname,
+      fileUrl:
+        process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename
+    }))
+    const thumbnail = req.files.thumbnail.map((file) => ({
+      fileName: file.originalname,
+      fileUrl:
+        process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename
+    }))[0]
+    try {
+      const setCategories = new Set(
+        categories.map((value) => value.toLowerCase())
+      )
+      const originPost = await postService.getPost(postId)
 
-postRouter.patch('/:postId', loginRequired, fileServer.array('code'), async (req, res, next) => {
-  const { postId } = req.params
-  let { title, description, categories } = req.body
-  const author = req.currentUserId
-  const code = req.files.map(file => ({ fileName: file.originalname, fileUrl: process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename }))
-  try {
-    const setCategories = new Set(categories.map(value => value.toLowerCase()))
-    const originPost = await postService.getPost(postId)
+      if (!originPost) {
+        throw new Error('수정할 게시글이 없습니다.')
+      }
+      const originCategory = originPost.categories.map(
+        (category) => category.category.name
+      )
+      if (author !== originPost.author._id.toString()) {
+        throw new Error('수정 권한이 없습니다.')
+      }
 
-    if (!originPost) {
-      throw new Error('수정할 게시글이 없습니다.')
-    }
-    const originCategory = originPost.categories.map(
-      (category) => category.category.name
-    )
-    if (author !== originPost.author._id.toString()) {
-      throw new Error('수정 권한이 없습니다.')
-    }
-
-    if (setCategories.size !== categories.length) {
-      throw new Error('중복된 카테고리가 있습니다.')
-    }
-    await categoryService.deleteCategory(originCategory)
-    categories = await categoryService.addCategory(categories)
-    const post = await postService.setPosts(
-      postId,
-      {
+      if (setCategories.size !== categories.length) {
+        throw new Error('중복된 카테고리가 있습니다.')
+      }
+      await categoryService.deleteCategory(originCategory)
+      categories = await categoryService.addCategory(categories)
+      const post = await postService.setPosts(postId, {
         title,
         description,
         categories,
         author,
-        code
-      }
-    )
-    res.status(200).json(post)
-  } catch (error) {
-    next(error)
+        code,
+        thumbnail
+      })
+      res.status(200).json(post)
+    } catch (error) {
+      next(error)
+    }
   }
-})
+)
 
 postRouter.delete('/:postId', loginRequired, async (req, res, next) => {
   const { postId } = req.params
