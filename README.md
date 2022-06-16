@@ -7,8 +7,8 @@
 
 - 전체 유저 조회
 - 특정 유저 조회
-- 유저 정보 수정(displayName, username, blog 등)
-- 회원 탈퇴
+- 유저 정보 수정(displayName, username, blog 등) 🔒
+- 회원 탈퇴 🔒
 
 #### Auth
 
@@ -17,9 +17,10 @@
 #### 포스트
 
 - 전체 포스트 조회(option: author, category, pagenation)
+- 특정 포스트 조회
 - 포스트 게시 🔒
-- ~~포스트 수정~~
-- ~~포스트 삭제~~
+- 포스트 수정 🔒
+- 포스트 삭제 🔒
 
 #### 카테고리
 
