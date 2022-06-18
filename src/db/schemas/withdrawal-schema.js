@@ -10,9 +10,9 @@ const WithdrawalSchema = new Schema(
       type: String,
       required: true
     },
-    createdAt: {
+    expireAt: {
       type: Date,
-      expires: 43200,
+      expires: '30d',
       default: Date.now
     }
   },

@@ -10,24 +10,32 @@ const PostSchema = new Schema(
       type: String,
       required: true
     },
-    categories: [{
-      category: {
-        type: Schema.Types.ObjectId,
-        ref: 'categories'
+    categories: [
+      {
+        category: {
+          type: Schema.Types.ObjectId,
+          ref: 'categories'
+        }
       }
-    }],
-    code: [{
-      type: new Schema(
-        {
+    ],
+    code: [
+      {
+        type: new Schema({
           fileName: String,
           fileUrl: String
-        }
-      )
-    }],
+        })
+      }
+    ],
     author: {
       type: Schema.Types.ObjectId,
       ref: 'users',
       require: true
+    },
+    thumbnail: {
+      type: new Schema({
+        fileName: String,
+        fileUrl: String
+      })
     }
   },
   {

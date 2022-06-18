@@ -5,14 +5,35 @@ class PostService {
     this.postModel = postModel
   }
 
-  async addPost (title, description, categories, author, code) {
-    const newPost = this.postModel.create({ title, description, categories, author, code })
+  async addPost (title, description, categories, author, code, thumbnail) {
+    const newPost = this.postModel.create({
+      title,
+      description,
+      categories,
+      author,
+      code,
+      thumbnail
+    })
     return newPost
   }
 
-  async getPosts (page, watch, authorId, categoryId) {
+  async getPost (postId) {
+    const post = this.postModel.findById(postId)
+    return post
+  }
+
+  async getPosts ({ page, watch, authorId, categoryId }) {
     const posts = this.postModel.findAll(page, watch, authorId, categoryId)
     return posts
+  }
+
+  async setPosts (postId, update) {
+    const updatedPost = await this.postModel.update({ postId, update })
+    return updatedPost
+  }
+
+  async deletePost (postId) {
+    await this.postModel.remove(postId)
   }
 }
 

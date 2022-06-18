@@ -24,6 +24,18 @@ class CategoryService {
     })
   }
 
+  async deleteCategory (categoryNames) {
+    await Promise.all(categoryNames.map(async (name) => {
+      const searched = await this.categoryModel.findByName(name.toLowerCase())
+      if (searched.post <= 1) {
+        await this.categoryModel.remove(searched._id)
+      } else {
+        await this.categoryModel.update(searched._id, { post: searched.post - 1 })
+      }
+    })
+    )
+  }
+
   async searchCategory (keyword) {
     const lowerKeyword = keyword.toLowerCase()
     const allCategory = await this.categoryModel.findAll()
