@@ -37,7 +37,7 @@ export default function passportInit () {
       const user = await findOrCreateUser(userInfo)
       done(null, {
         id: user._id,
-        name: user.displayName
+        name: user.username
       })
     } catch (e) {
       done(e, null)
