@@ -29,7 +29,7 @@
 
 ### Base URL
 
-https://fcgserver.loca.lt/ <- 반드시 먼저 해당 URL에서 전처리를 완료할 것
+http://ec2-3-128-87-34.us-east-2.compute.amazonaws.com/
 
 
 ### [API Docs](https://documenter.getpostman.com/view/20912371/UzBiQ9Nk#d25de983-9794-4814-92f5-9075afdab61c)
