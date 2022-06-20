@@ -10,10 +10,8 @@ authRouter.get('/github/callback', passport.authenticate('github', { failureRedi
   function (req, res) {
     const token = jwt.sign(req.user, process.env.JWT_SECRET_KEY, { expiresIn: process.env.ACCESSTOKEN_EXPIRE })
     res
-      .header({
-        token,
-        user: req.user
-      })
+      .cookie('token', token, { maxAge: 60 * 60 * 1000 * 24 })
+      .cookie('user', req.user, { maxAge: 60 * 60 * 1000 * 24 })
       .redirect(process.env.FRONTEND_HOME_URL)
   })
 
