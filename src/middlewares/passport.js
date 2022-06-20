@@ -18,30 +18,33 @@ const findOrCreateUser = async (profile) => {
   return created
 }
 export default function passportInit () {
-  passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: `${process.env.BASE_URL}/auth/github/callback`
-  },
-  async function (accessToken, refreshToken, profile, done) {
-    const userInfo = {
-      id: profile.id,
-      displayName: profile.displayName,
-      username: profile.username,
-      profileUrl: profile.profileUrl,
-      avatar: profile._json.avatar_url,
-      blog: profile._json.blog
-    }
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: `${process.env.FRONTEND_HOME_URL}`
+      },
+      async function (accessToken, refreshToken, profile, done) {
+        const userInfo = {
+          id: profile.id,
+          displayName: profile.displayName,
+          username: profile.username,
+          profileUrl: profile.profileUrl,
+          avatar: profile._json.avatar_url,
+          blog: profile._json.blog
+        }
 
-    try {
-      const user = await findOrCreateUser(userInfo)
-      done(null, {
-        id: user._id,
-        name: user.username
-      })
-    } catch (e) {
-      done(e, null)
-    }
-  }
-  ))
+        try {
+          const user = await findOrCreateUser(userInfo)
+          done(null, {
+            id: user._id,
+            name: user.username
+          })
+        } catch (e) {
+          done(e, null)
+        }
+      }
+    )
+  )
 }
