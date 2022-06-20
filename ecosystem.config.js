@@ -4,7 +4,7 @@ module.exports = {
       name: 'fcgserver',
       script: 'npm start',
       watch_delay: 5000,
-      ignore_watch: ['node_modules', './uploads']
+      ignore_watch: ['node_modules', 'src/uploads']
     }
   ]
 
