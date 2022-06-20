@@ -2,15 +2,9 @@ version: '3'
 services:          
   express:
     build: ./
-    environment:
-      - PORT=
-      - BASE_URL=
-      - MONGODB_URL=
-      - JWT_SECRET_KEY=
-      - GITHUB_CLIENT_ID=
-      - GITHUB_CLIENT_SECRET=
-      - ACCESSTOKEN_EXPIRE=
+    env_file:
+    - "./.env"
     container_name: express
-    port:
-      - port
+    ports:
+      - 4000:4000
     restart: "unless-stopped"
