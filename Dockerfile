@@ -5,4 +5,4 @@ RUN npm i
 RUN npm i -g pm2
 COPY . ./
 EXPOSE 4000
-CMD [ "pm2-runtime", "start", "npm", "--", "run", "start" ]
+CMD ["/bin/sh", "-c", "pm2-runtime 'npm start'", "pm2","logs"]
