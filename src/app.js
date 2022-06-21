@@ -3,13 +3,10 @@ import express from 'express'
 import path from 'path'
 import { v1Router } from './routers'
 import { errorHandler } from './middlewares'
-import passportInit from './middlewares/passport'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 
 const app = express()
-passportInit()
-
 // CORS 에러 방지
 app.use(cors())
 
