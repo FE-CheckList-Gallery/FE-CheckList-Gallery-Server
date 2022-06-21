@@ -1,24 +1,56 @@
 import { Router } from 'express'
-import passport from 'passport'
+import { userService } from '../services/user-service'
+import axios from 'axios'
 import jwt from 'jsonwebtoken'
-
 const authRouter = Router()
 
-authRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }))
+const findOrCreateUser = async (profile) => {
+  const user = await userService.getUser(profile.id, true)
 
-authRouter.get('/github/callback', passport.authenticate('github', { failureRedirect: '/auth/github', session: false }),
-  function (req, res) {
-    const token = jwt.sign(req.user, process.env.JWT_SECRET_KEY, { expiresIn: process.env.ACCESSTOKEN_EXPIRE })
-    res
-      .cookie('token', token, {
-        maxAge: 60 * 60 * 1000 * 30,
-        domain: process.env.FRONTEND_HOME_URL
-      })
-      .cookie('user', req.user, {
-        maxAge: 60 * 60 * 1000 * 30,
-        domain: process.env.FRONTEND_HOME_URL
-      })
-      .redirect(process.env.FRONTEND_HOME_URL)
-  })
+  if (user) {
+    return user
+  }
+  const withdrawal = await userService.getWithdrawal(profile.id)
+  if (withdrawal) {
+    throw new Error('탈퇴한 회원입니다.')
+  }
+  const created = await userService.addAuthUser(profile)
+
+  return created
+}
+
+authRouter.get('/:code', async (req, res, next) => {
+  const { code } = req.params
+  try {
+    const { data } = await axios.get(
+      `https://github.com/login/oauth/access_token?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}&code=${code}&redirect_uri=${process.env.GITHUB_REDIRECT_URI}`, {
+        headers: {
+          Accept: 'application/json'
+        }
+      }
+    )
+    const user = await axios.get('https://api.github.com/user', {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `token ${data.access_token}`
+      }
+    })
+    const userInfo = {
+      id: user.data.id,
+      displayName: user.data.name,
+      username: user.data.login,
+      profileUrl: user.data.html_url,
+      avatar: user.data.avatar_url,
+      blog: user.data.blog
+    }
+    const createdUser = await findOrCreateUser(userInfo)
+    const token = jwt.sign({ id: createdUser._id, name: createdUser.username }, process.env.JWT_SECRET_KEY, {
+      expiresIn: process.env.ACCESSTOKEN_EXPIRE
+    })
+    res.status(200).json({ token, username: createdUser.username })
+  } catch (error) {
+    next(error)
+  }
+})
 
 export default authRouter
