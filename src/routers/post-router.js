@@ -33,12 +33,25 @@ postRouter.post('/',
   async (req, res, next) => {
     let { title, description, categories } = req.body
     const author = req.currentUserId
-    const code = req.files.code.map(file => ({ fileName: file.originalname, fileUrl: process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename }))
+    const code = req.files.code.map((file) => ({
+      fileName: file.originalname,
+      fileUrl:
+        process.env.BASE_URL +
+        `/uploads/${req.currentUserId}_${req.requestTime}/` +
+        file.filename
+    }))
     const thumbnail = req.files.thumbnail.map((file) => ({
       fileName: file.originalname,
       fileUrl:
-        process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename
+        process.env.BASE_URL +
+        `/uploads/${req.currentUserId}_${req.requestTime}/` +
+        file.filename
     }))[0]
+
+    categories = Array.isArray(categories)
+      ? categories
+      : [categories]
+
     try {
       const setCategories = new Set(categories.map(value => value.toLowerCase()))
 
@@ -68,13 +81,21 @@ postRouter.patch(
     const code = req.files.code.map((file) => ({
       fileName: file.originalname,
       fileUrl:
-        process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename
+        process.env.BASE_URL +
+        `/uploads/${req.currentUserId}_${req.requestTime}/` +
+        file.filename
     }))
     const thumbnail = req.files.thumbnail.map((file) => ({
       fileName: file.originalname,
       fileUrl:
-        process.env.BASE_URL + `/uploads/${req.currentUserId}/` + file.filename
+        process.env.BASE_URL +
+        `/uploads/${req.currentUserId}_${req.requestTime}/` +
+        file.filename
     }))[0]
+
+    categories = Array.isArray(categories)
+      ? categories
+      : [categories]
     try {
       const setCategories = new Set(
         categories.map((value) => value.toLowerCase())

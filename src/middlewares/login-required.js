@@ -23,6 +23,9 @@ function loginRequired (req, res, next) {
 
     const { id, name } = jwtDecoded
     // 라우터에서 req.currentUserId를 통해 유저의 id에 접근 가능하게 됨
+    const time = String(new Date().valueOf())
+
+    req.requestTime = time
     req.currentUserId = id
     req.currentUserName = name
     next()

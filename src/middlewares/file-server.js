@@ -5,13 +5,14 @@ import fs from 'fs'
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(__dirname, '../uploads')
-    const author = req.currentUserId
+    const time = req.requestTime
+    const authorTime = req.currentUserId + '_' + time
     if (!fs.existsSync(dir)) fs.mkdirSync(dir)
-    if (!fs.existsSync(path.join(dir, author))) fs.mkdirSync(path.join(dir, author))
-    cb(null, path.join(dir, author))
+    if (!fs.existsSync(path.join(dir, authorTime))) fs.mkdirSync(path.join(dir, authorTime))
+    cb(null, path.join(dir, authorTime))
   },
   filename: function (req, file, cb) {
-    const fileName = new Date().valueOf() + '_' + file.fieldname + '_' + file.originalname
+    const fileName = file.originalname
     cb(null, fileName)
   }
 })
