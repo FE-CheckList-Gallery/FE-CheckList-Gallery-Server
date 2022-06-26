@@ -29,12 +29,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded({ extended: false }))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
-// template engine
+// JSX template engine
 app.set('views', __dirname + '/uploads')
 app.set('view engine', 'jsx')
 app.engine('jsx', require('express-react-views').createEngine())
 
-// view Router
+// (JSX) view Router
 app.get('/view/:component', async (req, res, next) => {
   const { component } = req.params
   const loaded = await import(`./uploads/${component}.jsx`)
