@@ -35,9 +35,9 @@ app.set('view engine', 'jsx')
 app.engine('jsx', require('express-react-views').createEngine())
 
 // (JSX) view Router
-app.get('/view/:component', async (req, res, next) => {
-  const { component } = req.params
-  const loaded = await import(`./uploads/${component}.jsx`)
+app.get('/view/:authorId/:component', async (req, res, next) => {
+  const { authorId, component } = req.params
+  const loaded = await import(`./uploads/${authorId}/${component}.jsx`)
   const sheet = new ServerStyleSheet()
   const body = renderToString(
     sheet.collectStyles(React.createElement(Template, null, loaded.default))
