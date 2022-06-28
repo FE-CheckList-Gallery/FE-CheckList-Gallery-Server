@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { loginRequired, fileServer } from '../middlewares'
 import { postService, categoryService } from '../services'
+import axios from 'axios'
 
 const postRouter = Router()
 
@@ -61,6 +62,12 @@ postRouter.post('/',
 
       categories = await categoryService.addCategory(categories)
       const post = await postService.addPost(title, description, categories, author, code, thumbnail)
+
+      await Promise.all(code.map(async ({ fileName, fileUrl }) => {
+        const posturl = process.env.BASE_VIEWER_URL
+        await axios.post(posturl, { fileUrl })
+      }))
+
       res.status(201).json(post)
     } catch (error) {
       next(error)
@@ -125,6 +132,14 @@ postRouter.patch(
         code,
         thumbnail
       })
+
+      await Promise.all(
+        code.map(async ({ fileName, fileUrl }) => {
+          const posturl = process.env.BASE_VIEWER_URL
+          await axios.post(posturl, { fileUrl })
+        })
+      )
+
       res.status(200).json(post)
     } catch (error) {
       next(error)
