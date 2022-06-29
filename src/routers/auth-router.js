@@ -47,7 +47,7 @@ authRouter.get('/:code', async (req, res, next) => {
     const token = jwt.sign({ id: createdUser._id, name: createdUser.username }, process.env.JWT_SECRET_KEY, {
       expiresIn: process.env.ACCESSTOKEN_EXPIRE
     })
-    res.status(200).json({ token, username: createdUser.username })
+    res.status(200).json({ token, username: createdUser.username, userId: createdUser._id })
   } catch (error) {
     next(error)
   }
