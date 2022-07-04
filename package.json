@@ -6,7 +6,9 @@
   "license": "MIT",
   "scripts": {
     "start": "babel-node index.js",
-    "lint": "eslint --fix --ext .js ."
+    "lint": "eslint --fix --ext .js .",
+    "build": "babel src -d build",
+    "heroku-postbuild": "npm install && npm build"
   },
   "dependencies": {
     "@sindresorhus/is": "^4.6.0",
