@@ -29,28 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.urlencoded({ extended: false }))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
-// JSX template engine
-app.set('views', __dirname + '/uploads')
-app.set('view engine', 'jsx')
-app.engine('jsx', require('express-react-views').createEngine())
-
-// (JSX) view Router
-app.get('/view/:authorId/:component', async (req, res, next) => {
-  const { authorId, component } = req.params
-  const loaded = await import(`./uploads/${authorId}/${component}.jsx`)
-  const sheet = new ServerStyleSheet()
-  const body = renderToString(
-    sheet.collectStyles(React.createElement(Template, null, loaded.default))
-  ) // collecting styles
-  const styles = sheet.getStyleTags() // getting all the tags from the sheet
-  const title = 'This work presented by『FE_CheckList_Gallery』.'
-  res.send(Html({
-    body,
-    styles,
-    title
-  }))
-})
-
 // v1 router.
 app.use('/', v1Router)
 app.get('/', (req, res) => {
