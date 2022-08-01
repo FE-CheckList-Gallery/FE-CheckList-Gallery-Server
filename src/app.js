@@ -6,13 +6,6 @@ import { errorHandler } from './middlewares'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 
-// rendering
-import React from 'react'
-import { renderToString } from 'react-dom/server'
-import Html from './uploads/html'
-import { ServerStyleSheet } from 'styled-components'
-import Template from './uploads/Template'
-
 const app = express()
 // CORS 에러 방지
 app.use(cors())
