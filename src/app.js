@@ -8,7 +8,12 @@ import bodyParser from 'body-parser'
 
 const app = express()
 // CORS 에러 방지
-app.use(cors())
+app.use(
+  cors({
+    origin: ['https://fe-checklist-gallery.github.io/FE-CheckList-Gallery'],
+    credentials: true
+  })
+)
 
 // request console
 app.use(morgan('tiny'))
