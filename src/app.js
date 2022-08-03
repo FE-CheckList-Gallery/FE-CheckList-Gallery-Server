@@ -10,7 +10,7 @@ const app = express()
 // CORS 에러 방지
 app.use(
   cors({
-    origin: ['https://fe-checklist-gallery.github.io/FE-CheckList-Gallery'],
+    origin: ['https://fe-checklist-gallery.github.io'],
     credentials: true
   })
 )
